@@ -1,7 +1,25 @@
 #include <iostream>
 using namespace std;
 char markers[10]={0};
-int isgameOver(char pl,int index)
+char players[2]={'X','O'};
+int isdraw()
+{
+    int flag=1;
+    for(int i=1;i<=9;++i)
+    {
+        if(markers[i]!=0)
+        {
+            flag=1;
+        }
+        else
+        {
+            flag=0;
+            break;
+        }
+    }
+    return flag;
+}
+int isgameOver(char pl)
 {
     if(markers[1]==pl && markers[2]==pl && markers[3]==pl)
         return 1;
@@ -21,6 +39,11 @@ int isgameOver(char pl,int index)
         return 1;
     return 0;
 }
+void restart()
+{
+    for(int i=0;i<10;++i)
+        markers[i]=0;
+}
 void Move(int index,char player)
 {
     markers[index]=player;
@@ -38,48 +61,54 @@ void print_board()
 int main()
 {
     int matchstatus=0,i;
-    int playerturn=1;
-    char player1,player2;
+    int pturn=0;
+    char ch='y';
     cout<<"\tWelcome to TIC TAC TOE!!\n\n";
-    cout<<"\tPlayer 1 choose your symbol X or O: ";
-    cin>>player1;
-    cout<<"\tPlayer 2 choose your symbol X or O: ";
-    cin>>player2;
+    cout<<"\tPlayer 1 :X\n";
+    cout<<"\tPlayer 2 :O\n";
     print_board();
-    if(player1==player2)
-        cout<<"\tFOUL!! Both players are using same symbol!!";
     do
     {
-        if(playerturn==1)
+        cout<<"\tMake your Move Player "<<pturn+1<<": ";
+        cin>>i;
+        if(markers[i]!=0)
         {
-            cout<<"\tPlayer 1's turn..Make your Move: ";
-            cin>>i;
-            Move(i,player1);
-            print_board();
-            if(!isgameOver(player1,i))
-                playerturn++;
-            else
-            {
-                cout<<"\tCongrats!! Player 1 Won!!!";
-                matchstatus=1;
-                break;
-            }
+            cout<<"\tAlready Marked Spot\n";
         }
-        if(playerturn==2)
-        {
-            cout<<"\tPlayer 2's turn..make your Move: ";
-            cin>>i;
-            Move(i,player2);
+        else{
+            Move(i,players[pturn]);
             print_board();
-            if(!isgameOver(player2,i))
-                playerturn--;
-            else
+            if(isgameOver(players[pturn]))
             {
-                cout<<"\tCongrats!! Player 2 Won!!!";
+                cout<<"\tCongrats!! Player "<<pturn+1<<" Won!!!\n";
                 matchstatus=1;
-                break;
+                cout<<"\tWant a Rematch?? (Y/N) ";
+                cin>>ch;
+                if(ch=='y' || ch=='Y')
+                {
+                    restart();
+                    matchstatus=0;
+                    continue;
+                }
             }
+            if(isdraw())
+            {
+                cout<<"\tGame Draw!!\n";
+                matchstatus=1;
+                cout<<"\tWant a Rematch?? (Y/N) ";
+                cin>>ch;
+                if(ch=='y' || ch=='Y')
+                {
+                    restart();
+                    matchstatus=0;
+                    continue;
+                }
+            }
+            if(pturn==1)
+                pturn=0;
+            else
+                pturn=1;
         }
-    }while(!matchstatus);
+    }while(!matchstatus && (ch=='Y' || ch=='y'));
     return 0;
 }
